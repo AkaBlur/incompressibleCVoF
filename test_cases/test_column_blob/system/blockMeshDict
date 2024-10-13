@@ -1,0 +1,107 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// apply m as default measurement for geometry defined here
+convertToMeters 1;
+
+// 1 mm as 2D thickness for simulation
+sim_thickness   1e-4;
+
+// geometry setup
+box_height  25e-3;
+box_width   5e-3;
+
+// mesh resolution
+// measured as resolution along x
+mesh_res    50;
+mesh_res_z  #calc "($box_height / $box_width) * $mesh_res";
+
+// orientation
+// 
+//    z
+//    |  y
+//    | /
+//    |/_____ x
+//
+
+vertices
+(
+    (0          0               0)
+    ($box_width 0               0)
+    ($box_width $sim_thickness  0)
+    (0          $sim_thickness  0)
+    (0          0               $box_height)
+    ($box_width 0               $box_height)
+    ($box_width $sim_thickness  $box_height)
+    (0          $sim_thickness  $box_height)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($mesh_res 1 $mesh_res_z)
+    simpleGrading (1 1 1)
+);
+
+boundary
+(
+    leftWall
+    {
+        type    wall;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    
+    rightWall
+    {
+        type    wall;
+        faces
+        (
+            (1 2 6 5)
+        );
+    }
+    
+    bottomWall
+    {
+        type    wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    
+    topWall
+    {
+        type    wall;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+
+    frontAndBack
+    {
+        type    empty;
+        faces
+        (
+            (0 1 5 4)
+            (2 3 7 6)
+        );
+    }
+);
+
+
+// ************************************************************************* //

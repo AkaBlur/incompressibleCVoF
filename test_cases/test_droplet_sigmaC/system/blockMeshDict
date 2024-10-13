@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+tankWidth       2;
+tankHeight      1.5;
+simThickness    0.05;
+
+simResMax       300;
+simResC         #calc "$simResMax * $tankHeight / $tankWidth";
+
+vertices
+(
+    (0              0               0)
+    ($tankWidth     0               0)   
+    ($tankWidth     $simThickness   0)   
+    (0              $simThickness   0)
+    (0              0               $tankHeight)
+    ($tankWidth     0               $tankHeight)   
+    ($tankWidth     $simThickness   $tankHeight)   
+    (0              $simThickness   $tankHeight)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($simResMax 1 $simResC) simpleGrading (1 1 1)
+);
+
+boundary
+(
+    leftWall
+    {
+        type    wall;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    rightWall
+    {
+        type    wall;
+        faces
+        (
+            (1 2 6 5)
+        );
+    }
+    lowerWall
+    {
+        type    wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    atmosphere
+    {
+        type    patch;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+    frontAndBack
+    {
+        type    empty;
+        faces
+        (
+            (0 1 5 4)
+            (2 3 7 6)
+        );
+    }
+);
+
+
+// ************************************************************************* //

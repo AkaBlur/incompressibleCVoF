@@ -1,0 +1,5 @@
+diluteDiffusionProperties/diluteDiffusionProperties.C
+surfaceTensionModels/concentrationDependent/concentrationDependentSurfaceTension.C
+incompressibleCVoF.C
+
+LIB = $(FOAM_USER_LIBBIN)/libincompressibleCVoF
